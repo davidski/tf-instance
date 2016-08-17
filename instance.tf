@@ -22,8 +22,8 @@ resource "aws_spot_instance_request" "magnet-dev" {
   spot_price    = "${var.myspot_price}"
   spot_type     = "one-time"
   wait_for_fulfillment = true
-  instance_type = "r3.2xlarge"
-  vpc_security_group_ids = ["${concat(aws_security_group.allow_ssh_from_home.id, mysecurity_groups, aws_security_group.all_outbound.id)}"]
+  instance_type = "${var.myinstance_type}"
+  vpc_security_group_ids = ["${aws_security_group.allow_ssh_from_home.id}", "${var.mysecurity_groups}", "${aws_security_group.all_outbound.id}"]
   key_name = "${var.mykey_name}"
   subnet_id = "${var.mysubnet_id}"
   tags = {
