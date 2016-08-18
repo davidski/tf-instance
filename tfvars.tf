@@ -2,8 +2,7 @@ variable "myvpc_id" {}
 
 variable "mysubnet_id" {}
 
-variable "mysecurity_groups" {
-}
+variable "mysecurity_groups" {}
 
 variable "myfs_id" {}
 

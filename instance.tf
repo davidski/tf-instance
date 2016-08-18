@@ -3,10 +3,9 @@ provider "aws" {
 }
 
 data "template_file" "user_data" {
-  template = "${file("templates/user_data.tpl")}"
+  template = "${file("${path.module}/templates/user_data.tpl")}"
   vars {
     fs_id = "${var.myfs_id}"
-    aws_region = "us-west-2"
   }
 }
 data "aws_ami" "magnet" {
@@ -45,7 +44,7 @@ resource "aws_security_group" "allow_ssh_from_home" {
       from_port = 22
       to_port = 22
       protocol = "tcp"
-      cidr_blocks = ["${var.myhome_ip}"]
+      cidr_blocks = ["${var.myhome_ip}/32"]
   }
 
   tags {
