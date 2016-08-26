@@ -8,7 +8,8 @@ data "template_file" "user_data" {
     fs_id = "${var.myfs_id}"
   }
 }
-data "aws_ami" "magnet" {
+
+data "aws_ami" "ami" {
   most_recent = true
   filter {
     name = "name"
@@ -16,15 +17,32 @@ data "aws_ami" "magnet" {
   }
 }
 
-resource "aws_spot_instance_request" "magnet-dev" {
-  ami           = "${data.aws_ami.magnet.image_id}"
-  spot_price    = "${var.myspot_price}"
-  spot_type     = "one-time"
-  wait_for_fulfillment = true
-  instance_type = "${var.myinstance_type}"
-  vpc_security_group_ids = ["${aws_security_group.allow_ssh_from_home.id}", "${var.mysecurity_groups}", "${aws_security_group.all_outbound.id}"]
-  key_name = "${var.mykey_name}"
-  subnet_id = "${var.mysubnet_id}"
+/*
+resource "aws_spot_instance_request" "spot_request" {
+  ami                         = "${data.aws_ami.ami.image_id}"
+  spot_price                  = "${var.myspot_price}"
+  spot_type                   = "one-time"
+  wait_for_fulfillment        = true
+  associate_public_ip_address = true
+  instance_type               = "${var.myinstance_type}"
+  vpc_security_group_ids      = ["${aws_security_group.allow_ssh_from_home.id}", "${var.mysecurity_groups}", "${aws_security_group.all_outbound.id}"]
+  key_name                    = "${var.mykey_name}"
+  subnet_id                   = "${var.mysubnet_id}"
+  tags = {
+    "project" = "niddel"
+    "Name"    = "Magnet Dev Server"
+  }
+  user_data = "${data.template_file.user_data.rendered}"
+}
+*/
+
+resource "aws_instance" "instance" {
+  ami                         = "${data.aws_ami.ami.image_id}"
+  associate_public_ip_address = true
+  instance_type               = "${var.myinstance_type}"
+  vpc_security_group_ids      = ["${aws_security_group.allow_ssh_from_home.id}", "${var.mysecurity_groups}", "${aws_security_group.all_outbound.id}"]
+  key_name                    = "${var.mykey_name}"
+  subnet_id                   = "${var.mysubnet_id}"
   tags = {
     "project" = "niddel"
     "Name"    = "Magnet Dev Server"
@@ -32,13 +50,16 @@ resource "aws_spot_instance_request" "magnet-dev" {
   user_data = "${data.template_file.user_data.rendered}"
 }
 
-resource "aws_eip" "ip" {
-  instance = "${aws_spot_instance_request.magnet-dev.spot_instance_id}"
+resource "aws_route53_record" "dns" {
+  zone_id       = "${var.zone_id}"
+  name          = "${var.name}"
+  type          = "A"
+  ttl           = "60"
+  records       = ["${aws_instance.instance.public_ip}"]
 }
 
 resource "aws_security_group" "allow_ssh_from_home" {
-  name = "allow_ssh_from_home"
-  description = "Allow SSH from home IP"
+  name_prefix = "allow_ssh_from_home_"
   vpc_id = "${var.myvpc_id}"
   ingress {
       from_port = 22
@@ -53,8 +74,7 @@ resource "aws_security_group" "allow_ssh_from_home" {
 }
 
 resource "aws_security_group" "all_outbound" {
-  name = "all_outbound"
-  description = "Allow all outbound traffic"
+  name_prefix = "all_outbound_"
   vpc_id = "${var.myvpc_id}"
   egress {
       from_port = 0
@@ -68,6 +88,8 @@ resource "aws_security_group" "all_outbound" {
   }
 }
 
-output "ip" {
-  value = "${aws_eip.ip.public_ip}"
+/*
+output "fqdn" {
+  value = "${aws_route53_record.dns.fqdn}"
 }
+*/
