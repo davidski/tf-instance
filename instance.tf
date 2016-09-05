@@ -17,6 +17,11 @@ data "aws_ami" "ami" {
   }
 }
 
+resource "aws_iam_instance_profile" "profile" {
+    name_prefix = "NiddelInstanceProfile"
+    roles = ["${var.role_names}"]
+}
+
 /*
 resource "aws_spot_instance_request" "spot_request" {
   ami                         = "${data.aws_ami.ami.image_id}"
@@ -24,6 +29,7 @@ resource "aws_spot_instance_request" "spot_request" {
   spot_type                   = "one-time"
   wait_for_fulfillment        = true
   associate_public_ip_address = true
+  iam_instance_profile        = "${aws_iam_instance_profile.profile.name}"
   instance_type               = "${var.myinstance_type}"
   vpc_security_group_ids      = ["${aws_security_group.allow_ssh_from_home.id}", "${var.mysecurity_groups}", "${aws_security_group.all_outbound.id}"]
   key_name                    = "${var.mykey_name}"
@@ -40,6 +46,7 @@ resource "aws_instance" "instance" {
   ami                         = "${data.aws_ami.ami.image_id}"
   associate_public_ip_address = true
   instance_type               = "${var.myinstance_type}"
+  iam_instance_profile        = "${aws_iam_instance_profile.profile.name}"
   vpc_security_group_ids      = ["${aws_security_group.allow_ssh_from_home.id}", "${var.mysecurity_groups}", "${aws_security_group.all_outbound.id}"]
   key_name                    = "${var.mykey_name}"
   subnet_id                   = "${var.mysubnet_id}"

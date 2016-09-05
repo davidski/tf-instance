@@ -27,3 +27,8 @@ variable "block_duration" {
 }
 
 variable "zone_id" {}
+
+variable "role_names" {
+    description = "List of roles to attach to the instance's IAM profile"
+    type = "list"
+}
