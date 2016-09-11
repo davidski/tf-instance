@@ -48,7 +48,7 @@ resource "aws_instance" "instance" {
   instance_type               = "${var.myinstance_type}"
   iam_instance_profile        = "${aws_iam_instance_profile.profile.name}"
   vpc_security_group_ids      = ["${aws_security_group.allow_ssh_from_home.id}", "${var.mysecurity_groups}", "${aws_security_group.all_outbound.id}"]
-  key_name                    = "${var.mykey_name}"
+  key_name                    = "${var.key_name}"
   subnet_id                   = "${var.mysubnet_id}"
   tags = {
     "project" = "niddel"

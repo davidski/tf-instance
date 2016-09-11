@@ -13,7 +13,7 @@ variable "myfs_id" {}
 
 variable "myhome_ip" {}
 
-variable "mykey_name" {}
+variable "key_name" {}
 
 variable "myinstance_type" {
     default = "r3.2xlarge"
