@@ -1,6 +1,6 @@
 variable "name" {
-    description = "Name of the default instance. Used to build the DNS name."
-    default     = "dev"
+  description = "Name of the default instance. Used to build the DNS name."
+  default     = "dev"
 }
 
 variable "myvpc_id" {}
@@ -16,19 +16,19 @@ variable "myhome_ip" {}
 variable "key_name" {}
 
 variable "myinstance_type" {
-    default = "r3.2xlarge"
+  default = "r3.2xlarge"
 }
 
 variable "myspot_price" {}
 
 variable "block_duration" {
-    description = "Length of time to run the spot instance in minutes (must be multiple of 60)."
-    default = 360
+  description = "Length of time to run the spot instance in minutes (must be multiple of 60)."
+  default     = 360
 }
 
 variable "zone_id" {}
 
 variable "role_names" {
-    description = "List of roles to attach to the instance's IAM profile"
-    type = "list"
+  description = "List of roles to attach to the instance's IAM profile"
+  type        = "list"
 }
